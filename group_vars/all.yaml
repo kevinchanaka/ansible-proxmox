@@ -3,6 +3,10 @@ proxmox:
   host:
   port:
   user:
+  token: # Proxmox token details, do not change
+    id: "{{ lookup('env', 'PROXMOX_TOKEN_ID') }}"
+    secret: "{{ lookup('env', 'PROXMOX_TOKEN_SECRET') }}"
+    name: "{{ lookup('env', 'PROXMOX_TOKEN_ID') | split('!') | last }}"
 
 # Default values for VMs
 vm_defaults: 

@@ -10,8 +10,8 @@
   community.general.proxmox_kvm:
     api_user: "{{ proxmox.user }}"
     api_host: "{{ proxmox.host }}"
-    api_token_id: "{{ lookup('env', 'PROXMOX_TOKEN_ID') }}"
-    api_token_secret: "{{ lookup('env', 'PROXMOX_TOKEN_SECRET') }}"
+    api_token_id: "{{ proxmox.token.name }}"
+    api_token_secret: "{{ proxmox.token.secret }}"
     timeout: 60
     node: "{{ node | default(vm_defaults.node) }}"
     clone: "yes"
@@ -24,8 +24,8 @@
   community.general.proxmox_kvm:
     api_user: "{{ proxmox.user }}"
     api_host: "{{ proxmox.host }}"
-    api_token_id: "{{ lookup('env', 'PROXMOX_TOKEN_ID') }}"
-    api_token_secret: "{{ lookup('env', 'PROXMOX_TOKEN_SECRET') }}"
+    api_token_id: "{{ proxmox.token.name }}"
+    api_token_secret: "{{ proxmox.token.secret }}"
     node: "{{ node | default(vm_defaults.node) }}"
     vmid: "{{ vm_id }}"
     update: yes
@@ -48,7 +48,7 @@
     url: "https://{{ proxmox.host }}:{{ proxmox.port }}/api2/json/nodes/{{ node | default(vm_defaults.node) }}/qemu/{{ vm_id }}/resize"
     method: PUT
     headers: 
-      Authorization: "PVEAPIToken={{ lookup('env', 'PROXMOX_TOKEN_ID') + '=' + lookup('env', 'PROXMOX_TOKEN_SECRET')}}"
+      Authorization: "PVEAPIToken={{ proxmox.token.id + '=' + proxmox.token.secret }}"
     body_format: form-urlencoded
     body:
       disk: scsi0

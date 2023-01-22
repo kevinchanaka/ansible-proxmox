@@ -12,6 +12,7 @@ This playbook requires an API key with relevant privileges
 Datastore.Allocate
 Datastore.AllocateSpace
 VM.Allocate
+VM.Audit
 VM.Config.* # All actions starting with VM.Config
 ```
 
