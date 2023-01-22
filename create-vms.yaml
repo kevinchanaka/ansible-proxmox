@@ -1,0 +1,12 @@
+---
+- name: Provision Proxmox virtual machines
+  hosts: localhost
+  gather_facts: no
+  tasks:
+  
+  - name: Provision VMs
+    include_role:
+      name: vm
+    vars:
+      vm: "{{ item }}"
+    loop: "{{ vms }}"

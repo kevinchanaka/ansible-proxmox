@@ -1,0 +1,56 @@
+---
+- name: Set facts for role
+  set_fact: {"{{ arg.key }}": "{{ arg.value }}"}
+  with_dict: "{{ vm }}"
+  when: vm is defined
+  loop_control:
+    loop_var: arg
+
+- name: Provision virtual machine
+  community.general.proxmox_kvm:
+    api_user: "{{ proxmox.user }}"
+    api_host: "{{ proxmox.host }}"
+    api_token_id: "{{ lookup('env', 'PROXMOX_TOKEN_ID') }}"
+    api_token_secret: "{{ lookup('env', 'PROXMOX_TOKEN_SECRET') }}"
+    timeout: 60
+    node: "{{ node | default(vm_defaults.node) }}"
+    clone: "yes"
+    full: yes
+    vmid: "{{ template_id }}"
+    newid: "{{ vm_id }}"
+    name: "{{ name }}"
+
+- name: Configure cloud-init drive
+  community.general.proxmox_kvm:
+    api_user: "{{ proxmox.user }}"
+    api_host: "{{ proxmox.host }}"
+    api_token_id: "{{ lookup('env', 'PROXMOX_TOKEN_ID') }}"
+    api_token_secret: "{{ lookup('env', 'PROXMOX_TOKEN_SECRET') }}"
+    node: "{{ node | default(vm_defaults.node) }}"
+    vmid: "{{ vm_id }}"
+    update: yes
+    cores: "{{ cpu_cores }}"
+    cpuunits: 1024
+    memory: "{{ memory }}"
+    vga: serial0
+    ciuser: "{{ username }}"
+    sshkeys: "{{ ssh_key | default(vm_defaults.ssh_key) }}"
+    nameservers: "{{ dns | default(vm_defaults.dns) | default(omit) }}"
+    net:
+      net0: 'virtio,bridge=vmbr0'
+    ipconfig:
+      ipconfig0: 'ip={{ ip }},gw={{ gateway | default(vm_defaults.gateway) }}'
+    scsi:
+      scsi0: '{"size":"{{ disk_size }}"}'
+
+- name: Resize VM disk
+  uri:
+    url: "https://{{ proxmox.host }}:{{ proxmox.port }}/api2/json/nodes/{{ node | default(vm_defaults.node) }}/qemu/{{ vm_id }}/resize"
+    method: PUT
+    headers: 
+      Authorization: "PVEAPIToken={{ lookup('env', 'PROXMOX_TOKEN_ID') + '=' + lookup('env', 'PROXMOX_TOKEN_SECRET')}}"
+    body_format: form-urlencoded
+    body:
+      disk: scsi0
+      size: "{{ disk_size }}"
+    validate_certs: no
