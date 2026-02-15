@@ -1,0 +1,51 @@
+- name: Store image name
+  set_fact:
+    image: "{{ template.download_url | basename }}"
+
+- name: Download cloud image to Proxmox node
+  delegate_to: "{{ proxmox.host }}"
+  vars:
+    ansible_user: "{{ proxmox.ssh_user }}"
+    ansible_password: "{{ proxmox.password }}"
+  get_url:
+    url: "{{ template.download_url }}"
+    dest: "/tmp/{{ image }}"
+    mode: '0644'
+    checksum: "sha256:{{ template.sha256_checksum }}"
+
+- name: Create VM using image 
+  community.proxmox.proxmox_kvm:
+    node: "{{ template.node | default(node) }}"
+    name: "{{ template.name }}"
+    vmid: "{{ template.id }}"
+    memory: 2048
+    cores: 2
+    cpu: x86-64-v2-AES
+    state: present
+    boot: order=scsi0
+    net:
+      net0: virtio,bridge=vmbr0
+    scsihw: virtio-scsi-pci
+    scsi:
+      scsi0: local-lvm:0,import-from=/tmp/{{ image }},size=10G
+    ide:
+      ide2: local-lvm:cloudinit
+    serial:
+      serial0: socket
+    vga: serial0
+    ostype: l26
+    ciupgrade: false
+
+- name: Resize disk
+  community.proxmox.proxmox_disk:
+    vmid: "{{ template.id }}"
+    disk: scsi0
+    size: 10G
+    state: resized
+
+- name: Convert VM to template
+  community.general.proxmox_kvm:
+    node: "{{ node }}"
+    name: "{{ template.name }}"
+    vmid: "{{ template.id }}"
+    state: template

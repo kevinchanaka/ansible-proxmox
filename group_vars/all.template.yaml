@@ -1,0 +1,26 @@
+# Proxmox environment details, do not change
+proxmox:
+  password: "{{ lookup('env', 'PROXMOX_PASSWORD') }}"
+  host: "{{ lookup('env', 'PROXMOX_HOST') }}"
+  user: "{{ lookup('env', 'PROXMOX_USER') }}"
+  ssh_user: "{{ lookup('env', 'PROXMOX_SSH_USER') }}"
+
+templates:
+- name: test-template # Template name, must be unique
+  id: 900 # Template ID, must be unique
+  download_url: https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img # Direct URL link to download image
+  sha256_checksum: 89f3177ce0e000cfdbe40f0cf3d32a7fa1142cd9f76a35bb27bce65da1bfdef8 # SHA256 checksum of image file
+  node: pve # Optional: Node to create VM on, defaults to first Proxmox node in alphabetical order 
+
+vms:
+- name: test # VM name, must be unique
+  id: 200 # VM ID, must be unique
+  template_id: 900 # ID of template to use
+  user: ubuntu # Cloud-init username
+  disk_size: 10G # Size of primary drive
+  cpu: 2 # Number of cores
+  memory: 2048 # Amount of memory in MB
+  ip: 192.168.0.30/24 # IP address of VM and network prefix 
+  gateway: 192.168.0.1 # Default gateawy address of VM
+  node: pve # Optional: Node to create VM on, defaults to first Proxmox node in alphabetical order 
+  ssh_key_file: "~/.ssh/id_rsa.pub" # Optional: Public SSH key to allow access to VM, defaults to ~/.ssh/id_rsa.pub

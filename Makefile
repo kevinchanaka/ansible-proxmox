@@ -1,6 +1,13 @@
-include .env
-export $(shell sed 's/=.*//' .env)
-.PHONY: vms env
+.PHONY: templates vms
 
-vms :
-	ansible-playbook -i hosts.yaml create-vms.yaml
+templates:
+	@set -a; \
+	. ./.env; \
+	set +a; \
+	ansible-playbook -i localhost playbooks/templates.yaml
+
+vms:
+	@set -a; \
+	. ./.env; \
+	set +a; \
+	ansible-playbook -i localhost playbooks/vms.yaml

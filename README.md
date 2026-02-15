@@ -1,35 +1,17 @@
 # ansible-proxmox
 
-Playbooks to manage Proxmox resources
+Playbooks to provision Proxmox resources
 
-## API Key
+## Setup
 
-This playbook requires an API key with relevant privileges
+1. Copy `.env.template` file, specify required information and rename file to `.env`
 
-1. Navigate to `Datacenter -> Permissions -> Roles` and create a new role with the following permissions
+2. Copy `group_vars/all.template.yaml`, specify required information and rename file to `group_vars/all.yaml`
 
-```
-Datastore.Allocate
-Datastore.AllocateSpace
-VM.Allocate
-VM.Audit
-VM.Config.* # All actions starting with VM.Config
-```
-
-2. Create a new API token and ensure privilige separation is enabled. Store the credentials in a `.env` file within the project's root directory
-
-```
-PROXMOX_TOKEN_ID=<TOKEN_ID>
-PROXMOX_TOKEN_SECRET=<TOKEN_SECRET>
-```
-
-3. Navigate to `Datacenter -> Permissions` and add a new API token permissions to the created role
+3. Follow instructions in `node_setup` to setup Proxmox nodes
 
 ## Usage
 
-Populate the settings in `group_vars/all.yaml` and run the following commands documented below
+Run `make template` to create VM templates
 
-```
-# Provision VMs
-make vms
-```
+Run `make vms` to create VMs using templates

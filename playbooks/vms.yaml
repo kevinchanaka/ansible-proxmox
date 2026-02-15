@@ -1,0 +1,19 @@
+- name: Create VMs
+  hosts: localhost
+  gather_facts: no
+
+  tasks:
+  - name: Get node information
+    community.proxmox.proxmox_node_info:
+    register: proxmox_nodes
+
+  - name: Store node name
+    set_fact:
+      node: "{{ proxmox_nodes['proxmox_nodes'] | sort(attribute='node') | first | json_query('node') }}"
+
+  - name: Create VMs from templates
+    include_role:
+      name: vm
+    vars: 
+      vm: "{{ item }}"
+    loop: "{{ vms }}"
