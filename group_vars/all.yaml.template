@@ -21,6 +21,6 @@ vms:
   cpu: 2 # Number of cores
   memory: 2048 # Amount of memory in MB
   ip: 192.168.0.30/24 # IP address of VM and network prefix 
-  gateway: 192.168.0.1 # Default gateawy address of VM
+  gateway: 192.168.0.1 # Default gateway address of VM
   node: pve # Optional: Node to create VM on, defaults to first Proxmox node in alphabetical order 
   ssh_key_file: "~/.ssh/id_rsa.pub" # Optional: Public SSH key to allow access to VM, defaults to ~/.ssh/id_rsa.pub
