@@ -1,0 +1,9 @@
+---
+skip_list:
+  - yaml[line-length]
+  - var-naming[no-role-prefix]
+
+exclude_paths:
+  - .cache/
+  - .ansible
+  - node_setup

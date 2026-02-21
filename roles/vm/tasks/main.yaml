@@ -1,26 +1,27 @@
+---
 - name: Create VM
   community.proxmox.proxmox_kvm:
     node: "{{ vm.node | default(node) }}"
     name: "{{ vm.name }}"
     vmid: "{{ vm.template_id }}"
     newid: "{{ vm.id }}"
-    clone: yes
-    full: yes
+    clone: true
+    full: true
 
 - name: Update VM configuration
   community.proxmox.proxmox_kvm:
     node: "{{ vm.node | default(node) }}"
     name: "{{ vm.name }}"
     vmid: "{{ vm.id }}"
-    update: yes
+    update: true
     memory: "{{ vm.memory }}"
     cores: "{{ vm.cpu }}"
     ciuser: "{{ vm.user }}"
     sshkeys: "{{ lookup('file', vm.ssh_key_file | default('~/.ssh/id_rsa.pub')) }}"
     net:
-      net0: 'virtio,bridge=vmbr0'
+      net0: "virtio,bridge=vmbr0"
     ipconfig:
-      ipconfig0: 'ip={{ vm.ip }},gw={{ vm.gateway }}'
+      ipconfig0: "ip={{ vm.ip }},gw={{ vm.gateway }}"
     state: present
 
 - name: Resize disk

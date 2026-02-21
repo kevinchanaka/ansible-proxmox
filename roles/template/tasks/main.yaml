@@ -1,5 +1,6 @@
+---
 - name: Store image name
-  set_fact:
+  ansible.builtin.set_fact:
     image: "{{ template.download_url | basename }}"
 
 - name: Download cloud image to Proxmox node
@@ -7,13 +8,14 @@
   vars:
     ansible_user: "{{ proxmox.ssh_user }}"
     ansible_password: "{{ proxmox.password }}"
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ template.download_url }}"
     dest: "/tmp/{{ image }}"
-    mode: '0644'
+    mode: "0644"
     checksum: "sha256:{{ template.sha256_checksum }}"
+    force: true
 
-- name: Create VM using image 
+- name: Create VM using image
   community.proxmox.proxmox_kvm:
     node: "{{ template.node | default(node) }}"
     name: "{{ template.name }}"
@@ -44,7 +46,7 @@
     state: resized
 
 - name: Convert VM to template
-  community.general.proxmox_kvm:
+  community.proxmox.proxmox_kvm:
     node: "{{ node }}"
     name: "{{ template.name }}"
     vmid: "{{ template.id }}"

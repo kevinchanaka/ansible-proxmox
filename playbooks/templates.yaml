@@ -1,21 +1,22 @@
+---
 # Proxmox Cloud-init docs - https://pve.proxmox.com/wiki/Cloud-Init_Support
 
 - name: Create templates
   hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   tasks:
-  - name: Get node information
-    community.proxmox.proxmox_node_info:
-    register: proxmox_nodes
+    - name: Get node information
+      community.proxmox.proxmox_node_info:
+      register: proxmox_nodes
 
-  - name: Store node name
-    set_fact:
-      node: "{{ proxmox_nodes['proxmox_nodes'] | sort(attribute='node') | first | json_query('node') }}"
+    - name: Store node name
+      ansible.builtin.set_fact:
+        node: "{{ proxmox_nodes['proxmox_nodes'] | sort(attribute='node') | first | json_query('node') }}"
 
-  - name: Create templates
-    include_role:
-      name: template
-    vars: 
-      template: "{{ item }}"
-    loop: "{{ templates }}"
+    - name: Create templates
+      ansible.builtin.include_role:
+        name: template
+      vars:
+        template: "{{ item }}"
+      loop: "{{ templates }}"

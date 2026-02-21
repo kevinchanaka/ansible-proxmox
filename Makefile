@@ -1,4 +1,10 @@
-.PHONY: templates vms
+.PHONY: lint lint-fix templates vms
+
+lint:
+	ansible-lint
+
+lint-fix:
+	ansible-lint --fix
 
 templates:
 	@set -a; \
