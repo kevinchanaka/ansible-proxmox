@@ -15,6 +15,14 @@
     checksum: "sha256:{{ template.sha256_checksum }}"
     force: true
 
+- name: Remove existing template
+  community.proxmox.proxmox_kvm:
+    node: "{{ template.node | default(node) }}"
+    name: "{{ template.name }}"
+    vmid: "{{ template.id }}"
+    timeout: 300
+    state: absent
+
 - name: Create VM using image
   community.proxmox.proxmox_kvm:
     node: "{{ template.node | default(node) }}"
@@ -37,6 +45,7 @@
     vga: serial0
     ostype: l26
     ciupgrade: false
+    timeout: 300
 
 - name: Resize disk
   community.proxmox.proxmox_disk:
@@ -50,4 +59,5 @@
     node: "{{ node }}"
     name: "{{ template.name }}"
     vmid: "{{ template.id }}"
+    timeout: 300
     state: template

@@ -7,6 +7,7 @@
     newid: "{{ vm.id }}"
     clone: true
     full: true
+    timeout: 300
 
 - name: Update VM configuration
   community.proxmox.proxmox_kvm:
@@ -22,7 +23,8 @@
       net0: "virtio,bridge=vmbr0"
     ipconfig:
       ipconfig0: "ip={{ vm.ip }},gw={{ vm.gateway }}"
-    state: present
+    timeout: 300
+    state: present    
 
 - name: Resize disk
   community.proxmox.proxmox_disk:
