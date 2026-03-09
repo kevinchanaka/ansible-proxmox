@@ -5,6 +5,12 @@ proxmox:
   user: "{{ lookup('env', 'PROXMOX_USER') }}"
   ssh_user: "{{ lookup('env', 'PROXMOX_SSH_USER') }}"
 
+dns: # NOTE: omitting DNS settings will cause same settings as host to be inherited
+  searchdomains: example.com # Search domains for VMs, can be single string or list
+  nameservers: # DNS servers, can be single string or list
+  - 1.1.1.1
+  - 1.0.0.1
+
 templates:
 - name: test-template # Template name, must be unique
   id: 900 # Template ID, must be unique

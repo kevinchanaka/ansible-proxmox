@@ -22,6 +22,7 @@
     vmid: "{{ template.id }}"
     timeout: 300
     state: absent
+  failed_when: false
 
 - name: Create VM using image
   community.proxmox.proxmox_kvm:
@@ -45,6 +46,8 @@
     vga: serial0
     ostype: l26
     ciupgrade: false
+    searchdomains: "{{ dns.searchdomains }}"
+    nameservers: "{{ dns.nameservers }}"
     timeout: 300
 
 - name: Resize disk
