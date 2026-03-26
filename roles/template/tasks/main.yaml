@@ -36,7 +36,7 @@
     boot: order=scsi0
     net:
       net0: virtio,bridge=vmbr0
-    scsihw: virtio-scsi-pci
+    scsihw: virtio-scsi-single
     scsi:
       scsi0: local-lvm:0,import-from=/tmp/{{ image }},size=10G
     ide:
@@ -49,6 +49,13 @@
     searchdomains: "{{ dns.searchdomains }}"
     nameservers: "{{ dns.nameservers }}"
     timeout: 300
+
+- name: Enable SSD emulation on disk
+  community.proxmox.proxmox_disk:
+    vmid: "{{ template.id }}"
+    disk: scsi0
+    ssd: true
+    state: present
 
 - name: Resize disk
   community.proxmox.proxmox_disk:
